@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automation Readiness — Score a Workflow</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --line:#e8ebf0;
+    --field:#eef1f6;
+    --accent:#2563eb; --accent-dark:#1d4ed8; --accent-soft:#eff4ff; --accent-line:#d5e2ff;
+    --err:#c0392b; --ok:#15803d; --warn:#b45309;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.06);
+    --shadow-hover:0 2px 4px rgba(16,24,40,.08), 0 10px 24px rgba(16,24,40,.10);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;color:var(--ink);background:var(--bg);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+
+  /* Header bar */
+  .topbar{background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 1px 3px rgba(16,24,40,.04)}
+  .topbar-inner{max-width:820px;margin:0 auto;padding:26px 24px;text-align:center}
+  .app-title{margin:0;font-size:31px;font-weight:700;letter-spacing:-.02em;line-height:1.2;text-transform:capitalize}
+  .app-sub{margin:7px auto 0;color:var(--muted);font-size:15.5px;max-width:640px}
+
+  /* Layout */
+  .wrap{max-width:820px;margin:0 auto;padding:16px 24px 72px}
+  section{margin-top:44px}
+  .wrap>section:first-child{margin-top:12px}
+  .section-title{margin:0 0 4px;font-size:20px;font-weight:600;letter-spacing:-.01em;text-align:center;text-transform:none}
+  .sub{color:var(--muted);margin:0 auto 18px;max-width:660px;text-align:center}
+
+  /* Cards */
+  .card{background:var(--card);border:1px solid rgba(16,24,40,.04);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:26px 28px;margin-bottom:18px}
+
+  /* Form fields */
+  label{font-weight:600;display:block;margin-bottom:7px}
+  textarea{width:100%;min-height:130px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    font:inherit;line-height:1.55;background:#fcfdfe;color:var(--ink);resize:vertical;transition:border-color .15s, box-shadow .15s}
+  input[type=text]{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+    font:inherit;background:#fcfdfe;color:var(--ink);transition:border-color .15s, box-shadow .15s}
+  textarea:focus,input[type=text]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  textarea::placeholder,input[type=text]::placeholder{color:var(--muted);opacity:1}
+  .row{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+  .row>div{flex:1 1 200px}
+  .hint{color:var(--muted);font-size:13px;font-weight:400}
+
+  /* Buttons */
+  button{margin-top:18px;background:var(--accent);color:#fff;border:0;border-radius:10px;
+    padding:12px 26px;font:inherit;font-weight:600;cursor:pointer;
+    box-shadow:0 1px 2px rgba(37,99,235,.25);transition:background .15s, transform .1s, box-shadow .15s}
+  button:hover:not(:disabled){background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.30)}
+  button:active:not(:disabled){transform:translateY(0)}
+  button:disabled{opacity:.55;cursor:default;box-shadow:none}
+
+  /* Spinner + progress */
+  .spin{display:none;width:15px;height:15px;margin-left:10px;vertical-align:-2px;border:2px solid #ccd7ea;border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
+  .spin.on{display:inline-block}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .progress{height:8px;background:var(--field);border-radius:999px;overflow:hidden;margin-top:16px}
+  .progress .bar{height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .25s ease}
+
+  /* Error card */
+  .err{background:#fdecea;border:1px solid #f3c9c4;color:var(--err);box-shadow:none}
+
+  /* Results headline */
+  .headline{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .defn{font-size:12px;color:var(--muted);margin-top:7px;max-width:240px;line-height:1.45}
+  .big{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.01em}
+  .metric .lbl{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:600}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-line);border-radius:999px;padding:5px 16px;font-weight:700;font-size:20px}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+  tr:last-child td{border-bottom:0}
+  td.score{font-weight:700;width:44px}
+
+  /* Neighbors */
+  .nb{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:9px;background:#fcfdfe}
+  .nb .nm{font-weight:600}
+  .nb .meta{color:var(--muted);font-size:13px}
+  .tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-left:6px;font-weight:400;color:var(--muted)}
+  .tag.top{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line);font-weight:600}
+
+  /* Tier scale */
+  .tierscale{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .tierscale .t{flex:1 1 0;min-width:120px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfcfe}
+  .tierscale .t .code{font-weight:700;font-size:13px;color:var(--muted)}
+  .tierscale .t .desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .tierscale .t.sel{background:var(--accent-soft);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .tierscale .t.sel .code{color:var(--accent)}
+  .tierscale .t.sel .desc{color:var(--ink)}
+  .tierscale .rec{display:block;font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+  .scalecap{color:var(--muted);font-size:12px;margin-top:10px}
+
+  /* In-card subheadings */
+  h2{font-size:14px;font-weight:600;color:var(--ink);margin:28px 0 10px;letter-spacing:.01em;text-transform:capitalize}
+  code{background:var(--field);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px}
+  .hidden{display:none}
+
+  /* Batch buckets */
+  .bucket{margin-top:22px}
+  .bucket .bh{display:flex;align-items:baseline;gap:9px;margin-bottom:8px}
+  .bucket .bh .dot{width:10px;height:10px;border-radius:50%}
+  .bucket .bh .nm{font-weight:700;font-size:15px}
+  .bucket .bh .ct{color:var(--muted);font-size:13px}
+  .bucket .desc{color:var(--muted);font-size:12.5px;margin:-4px 0 12px 19px}
+  .b-ripe .dot{background:var(--ok)} .b-ripe .nm{color:var(--ok)}
+  .b-data .dot{background:var(--warn)} .b-data .nm{color:var(--warn)}
+  .b-human .dot{background:var(--muted)} .b-human .nm{color:var(--muted)}
+  .item{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:9px;background:#fcfdfe}
+  .item .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+  .item .who{font-weight:600}
+  .item .who .dept{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
+  .item .rd{font-weight:700;font-size:18px}
+  .item .rd .rl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:6px;font-weight:600}
+
+  /* Batch legend / key */
+  .legend{margin:0 0 20px;border:1px solid var(--line);border-radius:10px;background:#fbfcfe}
+  .legend>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;
+    padding:11px 14px;font-weight:600;font-size:13px;color:var(--ink)}
+  .legend>summary::-webkit-details-marker{display:none}
+  .legend>summary::before{content:"▸";color:var(--muted);font-size:11px;transition:transform .15s}
+  .legend[open]>summary::before{transform:rotate(90deg)}
+  .legend .lg-body{padding:0 14px 14px}
+  .legend .lg-cap{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin:2px 0 0}
+  .legend .tierscale{margin-top:8px}
+  .legend .lg-defs{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px}
+  .legend .lg-defs .d{flex:1 1 240px;font-size:12px;color:var(--muted);line-height:1.45}
+  .legend .lg-defs .d b{color:var(--ink);font-weight:600}
+  .chips{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}
+  .chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);background:#fff}
+  .chip b{color:var(--ink);font-weight:600}
+  .reasons{margin:12px 0 0;padding-left:18px}
+  .reasons li{font-size:13px;margin-bottom:4px}
+  .reasons .d{font-weight:600}
+  .empty{color:var(--muted);font-size:13px;font-style:italic}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1 class="app-title">Automation Readiness Inference Agent</h1>
+    <p class="app-sub">Estimate how ready a business workflow is for automation</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+  <h2 class="section-title">Score a Workflow</h2>
+  <p class="sub">Paste a new workflow and score it against the 39 SaxeCap-labeled workflows in the retrieval pool.</p>
+
+  <div class="card">
+    <label for="desc">Workflow description</label>
+    <textarea id="desc" placeholder="e.g. Reconcile vendor invoices across three finance systems, flag mismatches, and route exceptions to an analyst for review."></textarea>
+    <div class="row" style="margin-top:12px">
+      <div>
+        <label for="name">Name <span class="hint">(optional)</span></label>
+        <input type="text" id="name" placeholder="e.g. Invoice reconciliation">
+      </div>
+      <div>
+        <label for="dept">Department <span class="hint">(optional)</span></label>
+        <input type="text" id="dept" placeholder="e.g. Finance">
+      </div>
+    </div>
+    <button id="go">Score workflow</button>
+    <span id="spin" class="spin"></span>
+    <span id="status" class="hint" style="margin-left:8px"></span>
+  </div>
+
+  <div id="error" class="card err hidden"></div>
+
+  <div id="results" class="card hidden">
+    <div class="headline">
+      <div class="metric"><div class="lbl">Readiness</div><div class="big" id="readiness"></div></div>
+      <div class="metric"><div class="lbl">Autonomy tier</div><div><span class="badge" id="tier"></span></div></div>
+      <div class="metric"><div class="lbl">Complexity</div><div class="big" id="cx" style="font-size:22px"></div><div class="defn">Complexity = build effort, measured as development time: Low under 4 months, Medium 4-6 months, High over 6 months.</div></div>
+      <div class="metric"><div class="lbl">Value</div><div class="big" id="val" style="font-size:22px"></div><div class="defn">Value = business impact if automated, measured as annual EBITDA uplift: Low under $2M, Medium $2M-$4M, High over $4M.</div></div>
+      <div class="metric"><div class="lbl">Confidence</div><div class="big" id="conf" style="font-size:22px"></div></div>
+    </div>
+    <div id="tierscale" class="tierscale"></div>
+    <div class="scalecap">Autonomy increases left → right. The estimated tier is highlighted.</div>
+
+    <h2>Dimension scores (1–5) &amp; evidence</h2>
+    <table>
+      <thead><tr><th>Dimension</th><th>Score</th><th>Evidence</th></tr></thead>
+      <tbody id="dims"></tbody>
+    </table>
+
+    <h2>Retrieved neighbors used to calibrate</h2>
+    <div id="neighbors"></div>
+  </div>
+  </section>
+
+  <section>
+  <h2 class="section-title">Batch Scoring</h2>
+  <p class="sub">Paste several workflows at once, separated by a blank line. Each block may
+    optionally begin with a <code>Name:</code> and/or <code>Department:</code> line; the rest is
+    the description. Results come back ranked by readiness and grouped.</p>
+
+  <div class="card">
+    <label for="batch">Workflows</label>
+    <textarea id="batch" style="min-height:180px" placeholder="e.g. Name: Invoice reconciliation
+Department: Finance
+Reconcile vendor invoices across three finance systems and route exceptions to an analyst.
+
+Name: Contract clause review
+Department: Legal
+Review inbound contracts against a clause library and flag non-standard terms for counsel."></textarea>
+    <button id="batchGo">Score all</button>
+    <span id="batchSpin" class="spin"></span>
+    <span id="batchStatus" class="hint" style="margin-left:8px"></span>
+    <div id="batchProgress" class="progress hidden"><div class="bar" id="batchBar"></div></div>
+  </div>
+
+  <div id="batchError" class="card err hidden"></div>
+
+  <div id="batchResults" class="card hidden">
+    <details class="legend" open>
+      <summary>Key — what the tier, value &amp; complexity labels mean</summary>
+      <div class="lg-body">
+        <p class="lg-cap">Autonomy tier (increases left → right)</p>
+        <div class="tierscale">
+          <div class="t"><div class="code">T0</div><div class="desc">human only</div></div>
+          <div class="t"><div class="code">T1</div><div class="desc">system assists human</div></div>
+          <div class="t"><div class="code">T2</div><div class="desc">system executes, human reviews all output</div></div>
+          <div class="t"><div class="code">T3</div><div class="desc">human reviews system exceptions</div></div>
+          <div class="t"><div class="code">T4</div><div class="desc">fully autonomous</div></div>
+        </div>
+        <div class="lg-defs">
+          <div class="d"><b>Value</b> = business impact if automated, measured as annual EBITDA uplift: Low under $2M, Medium $2M-$4M, High over $4M.</div>
+          <div class="d"><b>Complexity</b> = build effort, measured as development time: Low under 4 months, Medium 4-6 months, High over 6 months.</div>
+        </div>
+      </div>
+    </details>
+    <div id="buckets"></div>
+    <div id="batchErrList"></div>
+  </div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const btn = $("go");
+const fmtPct = x => (x == null ? "—" : (x * 100).toFixed(0) + "%");
+const esc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+btn.addEventListener("click", async () => {
+  const description = $("desc").value.trim();
+  const name = $("name").value.trim();
+  const department = $("dept").value.trim();
+  $("error").classList.add("hidden");
+  $("results").classList.add("hidden");
+  if (!description) { showError("Please paste a workflow description first."); return; }
+
+  btn.disabled = true;
+  btn.textContent = "Scoring…";
+  $("spin").classList.add("on");
+  $("status").textContent = "Evaluating automation readiness…";
+  try {
+    const resp = await fetch("/api/score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description, name, department })
+    });
+    const data = await resp.json();
+    if (!data.ok) { showError(data.error || "Scoring failed."); return; }
+    render(data.result);
+  } catch (e) {
+    showError("Request failed: " + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Score workflow";
+    $("spin").classList.remove("on");
+    $("status").textContent = "";
+  }
+});
+
+function showError(msg) {
+  const el = $("error");
+  el.textContent = "⚠ " + msg;
+  el.classList.remove("hidden");
+}
+
+const TIERS = [
+  ["T0", "human only"],
+  ["T1", "system assists human"],
+  ["T2", "system executes, human reviews all output"],
+  ["T3", "human reviews system exceptions"],
+  ["T4", "fully autonomous"],
+];
+
+function renderTierScale(selected) {
+  const scale = $("tierscale");
+  scale.innerHTML = "";
+  for (const [code, label] of TIERS) {
+    const sel = code === selected;
+    const t = document.createElement("div");
+    t.className = "t" + (sel ? " sel" : "");
+    t.innerHTML =
+      (sel ? "<span class='rec'>estimated</span>" : "") +
+      "<div class='code'>" + code + "</div>" +
+      "<div class='desc'>" + esc(label) + "</div>";
+    scale.appendChild(t);
+  }
+}
+
+function render(r) {
+  $("readiness").textContent = fmtPct(r.readiness);
+  $("tier").textContent = r.tier;
+  renderTierScale(r.tier);
+  $("cx").textContent = r.complexity;
+  $("val").textContent = r.value;
+  $("conf").textContent = fmtPct(r.confidence);
+
+  const dims = $("dims");
+  dims.innerHTML = "";
+  for (const d of r.dimensions) {
+    const tr = document.createElement("tr");
+    const nm = document.createElement("td");
+    nm.innerHTML = "<strong>" + esc(d.key) + "</strong><br><span class='hint'>" + esc(d.definition) + "</span>";
+    const sc = document.createElement("td");
+    sc.className = "score";
+    sc.textContent = d.score == null ? "—" : d.score;
+    const ev = document.createElement("td");
+    ev.textContent = d.evidence || "—";
+    tr.append(nm, sc, ev);
+    dims.appendChild(tr);
+  }
+
+  const nb = $("neighbors");
+  nb.innerHTML = "";
+  r.neighbors.forEach((n, i) => {
+    const div = document.createElement("div");
+    div.className = "nb";
+    const top = i === 0 ? "<span class='tag top'>most similar</span>" : "";
+    div.innerHTML =
+      "<div class='nm'>" + esc(n.name) + top +
+      "<span class='tag'>complexity: " + esc(n.complexity) + "</span>" +
+      "<span class='tag'>value: " + esc(n.value) + "</span></div>" +
+      "<div class='meta'>" + esc(n.department) + "</div>";
+    nb.appendChild(div);
+  });
+
+  $("results").classList.remove("hidden");
+}
+
+// ---- Version 2: batch scoring --------------------------------------------
+const TIER_LABEL = Object.fromEntries(TIERS);   // "T2" -> "system executes, ..."
+const BATCH_BUCKETS = [
+  ["ripe_now",        "Ready to automate", "b-ripe",  "High readiness — a strong candidate to automate now."],
+  ["needs_data_work", "Needs refinement",  "b-data",  "Medium readiness or low confidence — close the gaps first."],
+  ["keep_human",      "Keep human",      "b-human", "Low readiness or high human-judgment need — keep a person in charge."],
+];
+const batchBtn = $("batchGo");
+
+batchBtn.addEventListener("click", async () => {
+  const text = $("batch").value.trim();
+  $("batchError").classList.add("hidden");
+  $("batchResults").classList.add("hidden");
+  if (!text) { showBatchError("Please paste at least one workflow."); return; }
+
+  batchBtn.disabled = true;
+  batchBtn.textContent = "Scoring…";
+  $("batchSpin").classList.add("on");
+  $("batchStatus").textContent = "Evaluating automation readiness…";
+  $("batchProgress").classList.remove("hidden");
+  setBar(0);
+
+  try {
+    const resp = await fetch("/api/score_batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    });
+    if (!resp.ok || !resp.body) throw new Error("HTTP " + resp.status);
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
+        if (line) handleBatchMsg(JSON.parse(line));
+      }
+    }
+  } catch (e) {
+    showBatchError("Request failed: " + e.message);
+  } finally {
+    batchBtn.disabled = false;
+    batchBtn.textContent = "Score all";
+    $("batchSpin").classList.remove("on");
+    $("batchStatus").textContent = "";
+  }
+});
+
+function setBar(frac) { $("batchBar").style.width = Math.round(frac * 100) + "%"; }
+
+function showBatchError(msg) {
+  const el = $("batchError");
+  el.textContent = "⚠ " + msg;
+  el.classList.remove("hidden");
+}
+
+function handleBatchMsg(m) {
+  if (m.type === "start") {
+    $("batchStatus").textContent = m.total
+      ? "Scoring 0 of " + m.total + "…"
+      : "No workflows found in the text.";
+  } else if (m.type === "progress") {
+    setBar(m.total ? m.done / m.total : 1);
+    $("batchStatus").textContent =
+      "Scored " + m.done + " of " + m.total + " — " + m.name;
+  } else if (m.type === "result") {
+    setBar(1);
+    renderBatch(m);
+  }
+}
+
+function renderBatch(m) {
+  const host = $("buckets");
+  host.innerHTML = "";
+  for (const [key, title, cls, desc] of BATCH_BUCKETS) {
+    const items = (m.groups && m.groups[key]) || [];
+    const sec = document.createElement("div");
+    sec.className = "bucket " + cls;
+    sec.innerHTML =
+      "<div class='bh'><span class='dot'></span><span class='nm'>" + esc(title) +
+      "</span><span class='ct'>" + items.length + "</span></div>" +
+      "<div class='desc'>" + esc(desc) + "</div>";
+    if (items.length) {
+      items.forEach(it => sec.appendChild(batchItem(it)));
+    } else {
+      const e = document.createElement("div");
+      e.className = "empty";
+      e.textContent = "None";
+      sec.appendChild(e);
+    }
+    host.appendChild(sec);
+  }
+
+  const errHost = $("batchErrList");
+  errHost.innerHTML = "";
+  if (m.errors && m.errors.length) {
+    const h = document.createElement("h2");
+    h.textContent = "Could not score (" + m.errors.length + ")";
+    errHost.appendChild(h);
+    m.errors.forEach(e => {
+      const d = document.createElement("div");
+      d.className = "item";
+      d.innerHTML = "<div class='who'>" + esc(e.name) + "</div>" +
+        "<div class='meta' style='color:var(--err);font-size:13px'>" + esc(e.error) + "</div>";
+      errHost.appendChild(d);
+    });
+  }
+
+  $("batchResults").classList.remove("hidden");
+}
+
+function batchItem(it) {
+  const div = document.createElement("div");
+  div.className = "item";
+  const dept = it.department ? "<span class='dept'>" + esc(it.department) + "</span>" : "";
+  const tierLabel = TIER_LABEL[it.tier] ? " — " + esc(TIER_LABEL[it.tier]) : "";
+  const reasons = (it.top_reasons || []).map(r =>
+    "<li><span class='d'>" + esc(r.dimension) + "</span> (" + (r.score == null ? "—" : r.score) +
+    "/5): " + esc(r.reason) + "</li>").join("");
+  div.innerHTML =
+    "<div class='top'>" +
+      "<div class='who'>" + esc(it.name) + dept + "</div>" +
+      "<div class='rd'><span class='rl'>readiness</span>" + fmtPct(it.readiness) + "</div>" +
+    "</div>" +
+    "<div class='chips'>" +
+      "<span class='chip'>tier <b>" + esc(it.tier) + "</b>" + tierLabel + "</span>" +
+      "<span class='chip'>value <b>" + esc(it.value) + "</b></span>" +
+      "<span class='chip'>complexity <b>" + esc(it.complexity) + "</b></span>" +
+      "<span class='chip'>confidence <b>" + fmtPct(it.confidence) + "</b></span>" +
+    "</div>" +
+    (reasons ? "<ul class='reasons'>" + reasons + "</ul>" : "");
+  return div;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+department,initiative_num,initiative,source_org,utility_or_impact,complexity,roi,maturity,source_doc,description
+Revenue,1,AM Coaching & Performance Enablement,Asurion + SaxeCap,High,Med,High,Hypothesis,Revenue_org_AI_Ideas xlsx,"AI coaching, real-time guidance, and best-practice replication to lift new-hire and underperforming Account Managers tow"
+Revenue,NEW 1A,AM AI Automation,,High,High,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,"Reactive AI automation that mines RAM chats, emails, texts, meeting notes, and performance results; auto-drafts meeting "
+Revenue,NEW 1B,AM Daily Advisor,,Medium,High,,Hypothesis,Revenue_org_AI_Ideas xlsx,"Proactive daily guidance built on RAM AI Automation's activity data; recommends next-best actions, priority accounts, an"
+Revenue,2,Partner Growth Insights & AM Reporting,Asurion internal review,Medium,Med,Medium,In flight,Revenue_org_AI_Ideas xlsx,Auto-generate weekly performance insights for Account Managers and field leaders from Power BI; cut manual report pulls 
+Revenue,3,Sales Enablement Content & Training Assist,Asurion internal review,Medium,Low,High,In flight,Revenue_org_AI_Ideas xlsx,"Generate and refresh sales decks, one-pagers, and audience-specific messaging; keep training current as messaging change"
+Revenue,4,Cross-Group Workflow Connectivity,Asurion + SaxeCap,High,Med,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,"Connect the manual, disconnected handoffs across the five revenue groups (partner marketing, CPM, analysts, field / AM, "
+Revenue,5,Greenfield Sales Pipeline & Data Foundation,SaxeCap + Asurion,High,High,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,Stand up the pipeline and account data layer that does not exist today (no legacy CRM): a modern system of record for ac
+Revenue,NEW,Governed cost assumption data feeds,,Medium,High,,,Revenue_org_AI_Ideas xlsx,
+Revenue,6,Partner-Seller AI Roleplay & Coaching,Asurion internal review,Medium,Med,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,AI role-play and coaching for partner sellers to practice conversations and product knowledge (cross-ref Product AI Trai
+Revenue,7,Sales-Reporting Data Quality Monitoring,Asurion internal review,Medium,Med,Medium,In flight,Revenue_org_AI_Ideas xlsx,AI monitoring and alerting on client data files used in sales performance reporting; catch issues before they hit report
+Revenue,8,Client Reporting & QBR Automation,Outside consultant + SaxeCap,Medium,Med,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,"Automate cross-functional data synthesis for QBR decks and CPM performance reporting (~40-50 CPMs, 20-30% of time)."
+Revenue,9,Sales Script & Playbook Optimization,Outside consultant,Medium,Low,High,Hypothesis,Revenue_org_AI_Ideas xlsx,"Optimize sales scripts, store-visit planning, and playbook guidance for the ~150 field Account Managers."
+Revenue,10,Pricing & Deal-Desk Analytics Assist,SaxeCap,Medium,Med,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,"Support PM & Pricing with pricing analytics, deal modeling, and approval-workflow acceleration."
+Revenue,11,RFP / Proposal Response Assistant,SaxeCap,Medium,Low,High,Hypothesis,Revenue_org_AI_Ideas xlsx,AI-assisted drafting of sales RFP and proposal responses from a governed content library.
+Revenue,12,Account Health & Next-Best-Action Copilot,SaxeCap + Asurion,Medium,Med,Medium,Hypothesis,Revenue_org_AI_Ideas xlsx,Surface account-health signals and recommended next actions for CPMs and account teams.
+Legal,,DSR / privacy request automation,SaxeCap enterprise grid,Low,Low,,,Week4/6/8 ROI framework deck,
+Finance,,Finance Close Control Tower,SaxeCap enterprise grid,Low,Low,,,Week4/6/8 ROI framework deck,
+Marketing,,Cross-Tool Workflow Orchestration,SaxeCap enterprise grid,Low,Low,,,Week4/6/8 ROI framework deck,
+Legal,,Compliance comms / legal clause library + collateral review,SaxeCap enterprise grid,Medium,Low,,,Week4/6/8 ROI framework deck,
+CS,,IAM Credentialing Automation,SaxeCap enterprise grid,High,Medium,,,Week4/6/8 ROI framework deck,
+CS,,CS Analytics / bridge creation,SaxeCap enterprise grid,Medium,Low,,,Week4/6/8 ROI framework deck,
+HR,,Talent Acquisition Agentic Suite,SaxeCap enterprise grid,Medium,Low,,,Week4/6/8 ROI framework deck,
+Finance,,FP&A Automation,SaxeCap enterprise grid,Low,Medium,,,Week4/6/8 ROI framework deck,
+Finance,,Quote-to-Cash Retail Automation,SaxeCap enterprise grid,Low,Medium,,,Week4/6/8 ROI framework deck,
+Legal,,Contract standardization,SaxeCap enterprise grid,Medium,Medium,,,Week4/6/8 ROI framework deck,
+Finance,,Balance Sheet Reconciliation,SaxeCap enterprise grid,Medium,Medium,,,Week4/6/8 ROI framework deck,
+Supply Chain,,Commit & PO Reconciliation Automation,SaxeCap enterprise grid,Medium,Medium,,,Week4/6/8 ROI framework deck,
+CS,,Call stitching & call tagging,SaxeCap enterprise grid,High,Medium,,,Week4/6/8 ROI framework deck,
+CS,,Coaching next-best-action,SaxeCap enterprise grid,High,Medium,,,Week4/6/8 ROI framework deck,
+UBIF,,Store Interaction Cross-Sell & Upsell Intelligence & Coaching,SaxeCap enterprise grid,Medium,Medium,,,Week4/6/8 ROI framework deck,
+UBIF,,Technician Workflow Copilot & Agent,SaxeCap enterprise grid,High,Medium,,,Week4/6/8 ROI framework deck,
+Revenue,,AM Performance & Coaching Engine,SaxeCap enterprise grid,High,Medium,,,Week4/6/8 ROI framework deck,
+Supply Chain,,Connected Planning-to-Procurement,SaxeCap enterprise grid,High,Medium,,,Week4/6/8 ROI framework deck,
+CS,,AI-enabled WFM command center,SaxeCap enterprise grid,Very High,High,,,Week4/6/8 ROI framework deck,
+,,Guided workflows & process-adherence intelligence,SaxeCap enterprise grid,Medium,Low,,,Week4/6/8 ROI framework deck,"Guide employees through complex processes step by step and flag deviations, surfacing process-adherence intelligence to keep work on-standard."
+Fraud Ops,,Sales Compliance Review & Coaching Triage,SaxeCap enterprise grid,Medium,Medium,,,Week4/6/8 ROI framework deck,"Review sales interactions for compliance, triage issues, and route coaching to the right reps; cut manual compliance review load."
+Claims / Fraud Ops,,Adjudication360 Examiner Capacity & Surge-Response Copilot,SaxeCap enterprise grid,Medium,Medium,,,Week4/6/8 ROI framework deck,"Copilot that expands claims-examiner capacity and absorbs volume surges, assisting adjudication decisions and prioritizing caseloads."
+PEM,,SDLC Productivity across PEM Engineering,SaxeCap enterprise grid,High,High,,,Week4/6/8 ROI framework deck,"Boost software-delivery productivity across PEM engineering with AI assistance spanning the SDLC: code, review, testing, and release."
+PEM,,"Telemetry, Attribution & Harvest Control",SaxeCap enterprise grid,High,High,,,Week4/6/8 ROI framework deck,"Instrument telemetry, attribute usage and outcomes, and control harvest of AI productivity gains across PEM engineering."
