@@ -2,7 +2,7 @@
 
 A retrieval-augmented agent that reads a workflow description and scores how ready it is to automate. It scores the workflow across eight dimensions, estimates a value and complexity rating, maps it to an autonomy tier (T0 to T4), and returns a confidence level and the similar past workflows it used to calibrate. It runs as a FastAPI web app with single-workflow and batch scoring.
 
-## Setup (Windows, no admin required)
+## Setup (Windows)
 
 ```bash
 python -m venv .venv
