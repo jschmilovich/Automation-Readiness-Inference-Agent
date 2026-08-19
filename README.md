@@ -24,7 +24,7 @@ If you already use Claude Code through the gateway on your machine, scoring shou
 
 ## Setup
 
-On an Asurion Windows machine:
+On Windows:
 
 ```bash
 python -m venv .venv
